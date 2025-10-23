@@ -3,7 +3,7 @@ After downloading the given file in pico i went to my downloads directory where 
 `cd ~/Downloads`
 then i used the cmnd
 `gdb debugger0_a` to debug the given file as that is what gnu does
-after which i got some text which didn't really help me so i decided to give this cmnd a try
+after which it loaded gdb for me, then i gave this cmnd a try
 `gdb disassemble main`, "Disassembly" translates machine code to assembly language
 which gave me this
 ```
