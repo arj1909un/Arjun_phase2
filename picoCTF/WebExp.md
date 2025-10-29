@@ -26,7 +26,7 @@ filters: `or and = like > < -- admin`
 Here, the word `admin` was blocked, so what I can do is, break it into two parts and concatenate it using the relevant operators. 
 `||` is used to concatenate two strings.   
 
-### Round 5: `adm'||'in/`
+### Round 5: `adm'||'in/*`
 
 filters: `or and = like > < -- admin union`
 
@@ -84,4 +84,27 @@ if ($round === 1) {
 ?>
 ```
 
-## Flag: `picoCTF{y0u_m4d3_1t_79a0ddc6}`
+# Flag: `picoCTF{y0u_m4d3_1t_79a0ddc6}`
+
+
+
+# 3.Cookies
+
+
+This challenge was rather easier but i feel this is not the right way to do it but anyways, I'll explain my complete thought process, so after clicking on the link I got the following web page opened:
+
+
+Then I just started trying filling in input, wrote `snickerdoodle` first printed out the following:
+
+
+Then tried a few more ccokie derivatives trying to get to the right one but all were invalid ,then i decide to click inspect->Application->Cookies
+after seeing a table with name written and a number in front of it i double clicked on that bar and edited the value to 0, which brought me back to the original page
+after which i figured out that depending on the number contents on my screen would change.
+i tried  0,10,20 numbers in this pattern and i found out that by putting 30 i would get cookie name as invalid so i kept trying and at number 18 i found out the contents on my screen revealed the flag
+
+
+
+# Flag
+`picoCTF{3v3ry1_l0v3s_c00k135_96cdadfd}`
+
+
