@@ -1,4 +1,31 @@
-# 2.tunn3l v1s10n 
+# 1.Trivial Flag Transfer Protocol
+
+I found a file named `tftp.pcapng`.
+
+I had to lookup what a `.pcapng` file was and from what I could understand, it had to do something with packets and file transfer. This file can be opened with an application called Wireshark. `.pcapng` file is a packet capture file where packets are sniffed from a given network. 
+
+I exported all the files from `tftp.pcapng` to a new folder and got the following(File->Export Objects->TFTP): 
+
+
+1) `program.deb` -> This file was the installer for a Steganography tool called **Steghide**
+
+2) `instructions.txt` -> Contained gibberish and had to run it through Cipher Identifier from https://dcode.fr. The tool detected that it was encoded using ROT13 Cipher. This is what it said after decoding: 
+   `TFTPDOESNTENCRYPTOURTRAFFICSOWEMUSTDISGUISEOURFLAGTRANSFER.FIGUREOUTAWAYTOHIDETHEFLAGANDIWILLCHECKBACKFORTHEPLAN`
+
+3) `plan` -> This was a plain text file and contained gibberish. On running it through Cipher Identifier tool from https://dcode.fr, it found out that it was encoded using ROT13 Cipher.  On decoding this is what it said: 
+   `IUSEDTHEPROGRAMANDHIDITWITH-DUEDILIGENCE.CHECKOUTTHEPHOTOS`
+
+4) `picture1.bmp`, `picture2.bmp`, `picture3.bmp` , I used **Steghide** to extract data from these images.
+   
+   Command used: `steghide extract -sf picture*.bmp`
+   it asked for the passphrase and using the `plan` file I assumed it would be `  `. On inputting the passphrase in `picture3.bmp`, it gave me a file called `flag.txt`, which contained the answer for the challenge. (**Note**: `picture1.bmp` and `picture2.bmp` resulted in error when using the above passphrase, only the third one worked which was the answer)
+
+
+# flag: `picoCTF{h1dd3n_1n_pLa1n_51GHT_18375919}`
+
+
+
+ # 2.tunn3l v1s10n 
 
 Provided with a file called `tunn3l_v1s10n` . 
 first instinct and the only thing that came into my mind was this:  
@@ -61,8 +88,35 @@ I changed the height of the image to match the width and make it a proper square
 Changed `3201 0000` -> `6e04 0000` using `hexedit`. 
 
 The flag is now clearly visible in the picture. 
-
-
-
 # flag: `picoCTF{qu1t3_a_v13w_2020}`
+
+
+
+
+# 3.m00nwalk 
+
+
+Provided with a file called `message.wav`. 
+
+
+The first hint helped me find out which type of signal was contained in the wav file. 
+
+Hint: How did pictures from the moon landing get sent back to Earth?
+After looking up on google, this is what I found: 
+-> NASA selected a scan converter manufactured by RCA to convert the black-and-white SSTV signals from the Apollo 7, 8, 9 and 11 missions.
+
+SSTV -> Slow Scan Television.
+
+By making use of this project on github, I can directly get the data without running it through a specialised program. 
+
+https://github.com/colaclanth/sstv
+
+By directly running the command : `sstv -d message.wav -o result.png` I got my image. 
+
+
+# flag: `picoCTF{beep_boop_im_in_space}`
+
+
+
+
 
