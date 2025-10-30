@@ -56,14 +56,6 @@ int main(int argc, char **argv){
 I went back to Pico and launched the instance, it asked for an input and i entered some random strings which in turn resulted in me getting exited from the code.
 On further inspection in `vuln.c`, I could see `char buf1[100]`. Which meant `buf1` or buffer 1 was allocated a size of 100 chars. 
 
-In the given function, we can see that `buf2` is assigned 16 chars and the user input is being copied into buf2. This means, any input greater than 16 chars will overflow the buffer and give out the flag.
-
-```c
-void vuln(char *input){
-  char buf2[16];
-  strcpy(buf2, input);
-}
-```
 What really caught my attention was the function called `sigsegv_handler` after some surfing i found out what it means.
 ```c
 void sigsegv_handler(int sig)
@@ -73,6 +65,12 @@ After looking at the first hint i found the way to my flag
 `How can you trigger the flag to print?`
 Provide input longer than 16 bytes to overflow buf2 in the vuln() function and this will corrupt the stack and cause a segmentation fault finally the SIGSEGV handler triggers and prints the flag.
 
+```c
+void vuln(char *input){
+  char buf2[16];
+  strcpy(buf2, input);
+}
+```
 On passing input of more than 16 chars, the program gave out the flag. 
 
 
