@@ -94,8 +94,6 @@ picoCTF{su((3ss_(r@ck1ng_r3@_881d93b6}
 
 
 
-
-
 # 3.miniRSA 
 
 After downlaoding the given file i found this text so  during citadel i learned about this website called dcode.fr(https://www.dcode.fr)
