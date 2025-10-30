@@ -10,6 +10,9 @@ Therefore, a 0 has to be prepended to the given binary number to make it fit int
 By using Boolean algebra, the following result was obtained: 
 
 Input: `011100011000101001000100101010101110`
+
+<img width="587" height="863" alt="image" src="https://github.com/user-attachments/assets/48ca5afe-a4e4-4bed-85d4-0587a4553654" />
+
 After solving this beautiful(sacrcasm) logic gate of course after some revision i got this :
 Output: `100010011000`
 
