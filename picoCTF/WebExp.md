@@ -87,6 +87,22 @@ if ($round === 1) {
 # Flag: `picoCTF{y0u_m4d3_1t_79a0ddc6}`
 
 
+## 2. SSTI1
+
+ The first thing I did, was opening up the inspector in my firefox window and looking at the network section. 
+ In there, I looked at the `GET` request
+Through which I could see that the server was running python.
+		
+ Then looking at one of the hints, I could identify that the attack used here was `Server Side Template Injection`, having no prior knowledge regarding this, I searched up "python server side template injection" on google.
+ I landed on a website called "yeswehack.com", and it listed common `SSTI` attacks and the first one for python's `jinja2` which is the default template engine in `Flask`. 
+ I sent the first payload given `{{self.__init__.__globals__.__str__()[1786:1789]}}` which actually worked and printed `id` as said on the website.
+ I modified the second payload given which was to run a system command to list all the files in the current working directory. The command used was `{{self._TemplateReference__context.cycler.__init__.__globals__.os.popen("ls").read()}}`
+  
+ So there was a file called `flag` in the same directory, again running the same injection but this time using `cat flag`, I was able to get the flag. `{{self._TemplateReference__context.cycler.__init__.__globals__.os.popen("cat flag").read()}}`
+
+## Flag: `picoCTF{s4rv3r_s1d3_t3mp14t3_1nj3ct10n5_4r3_c001_4675f3fa}`
+
+
 
 # 3.Cookies
 
