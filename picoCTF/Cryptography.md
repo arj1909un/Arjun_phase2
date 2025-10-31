@@ -93,6 +93,144 @@ picoCTF{su((3ss_(r@ck1ng_r3@_881d93b6}
 # flag: `picoCTF{su((3ss_(r@ck1ng_r3@_881d93b6}`
 
 
+# 2. Custom Encryption
+Can you get sense of this code file and write the function that will decode the given encrypted file content. Find the encrypted file 
+
+Contents of `custom_encryption.py`:
+```python
+from random import randint
+import sys
+
+
+def generator(g, x, p):
+    return pow(g, x) % p
+
+
+def encrypt(plaintext, key):
+    cipher = []
+    for char in plaintext:
+        cipher.append(((ord(char) * key*311)))
+    return cipher
+
+
+def is_prime(p):
+    v = 0
+    for i in range(2, p + 1):
+        if p % i == 0:
+            v = v + 1
+    if v > 1:
+        return False
+    else:
+        return True
+
+
+def dynamic_xor_encrypt(plaintext, text_key):
+    cipher_text = ""
+    key_length = len(text_key)
+    for i, char in enumerate(plaintext[::-1]):
+        key_char = text_key[i % key_length]
+        encrypted_char = chr(ord(char) ^ ord(key_char))
+        cipher_text += encrypted_char
+    return cipher_text
+
+
+def test(plain_text, text_key):
+    p = 97
+    g = 31
+    if not is_prime(p) and not is_prime(g):
+        print("Enter prime numbers")
+        return
+    a = randint(p-10, p)
+    b = randint(g-10, g)
+    print(f"a = {a}")
+    print(f"b = {b}")
+    u = generator(g, a, p)
+    v = generator(g, b, p)
+    key = generator(v, a, p)
+    b_key = generator(u, b, p)
+    shared_key = None
+    if key == b_key:
+        shared_key = key
+    else:
+        print("Invalid key")
+        return
+    semi_cipher = dynamic_xor_encrypt(plain_text, text_key)
+    cipher = encrypt(semi_cipher, shared_key)
+    print(f'cipher is: {cipher}')
+
+
+if __name__ == "__main__":
+    message = sys.argv[1]
+Bandwidth saved
+3minutes
+Time saved
+￼
+TheFlixer
+
+￼
+TheFlixer
+
+￼
+TheFlixer
+
+￼
+youtube
+
+￼
+
+    test(message, "trudeau")
+```
+
+contents of `enc_flag` 
+```
+a = 94
+b = 21
+cipher is: [131553, 993956, 964722, 1359381, 43851, 1169360, 950105, 321574, 1081658, 613914, 0, 1213211, 306957, 73085, 993956, 0, 321574, 1257062, 14617, 906254, 350808, 394659, 87702, 87702, 248489, 87702, 380042, 745467, 467744, 716233, 380042, 102319, 175404, 248489]
+```
+Looking at the code for the first time, it looked very complex.
+Breaking it down:
+First in the main function, two numbers p and g are defined, using these two more numbers a which is a random number between (p-10, p) and b which is a random number between (g-10 , g)
+These a and b are provided to me through the `enc_flag` file, `a=94, b=21`.
+Now `u`, `v`, `key` and `b_key` are calculated via the `generator` function which takes three parameters and excise them with a RSA sort of algorithm `pow(g, x) % p`.
+	 `u` = 43
+	 `v` = 8 
+	 `key` = 47
+	`b_key` = 47
+	 So here `shared key` is 47
+ After this the plain text is XORed with the test key `tradeau`, after that it is passed through the `encrypt` function where each string's each character's ascii  is multiplied by the shared key and 311.
+- Lastly, it generates list of decimal values that are encrypted form of the plain text.
+- I created a python script to decrypt this data, it mimics the original file, just reverts all the steps one by one.
+```python
+
+encrypted_nums = [131553, 993956, 964722, 1359381, 43851, 1169360, 950105, 321574, 1081658, 613914, 0, 1213211, 306957, 73085, 993956, 0, 321574, 1257062, 14617, 906254, 350808, 394659, 87702, 87702, 248489, 87702, 380042, 745467, 467744, 716233, 380042, 102319, 175404, 248489]
+
+xor_text = []
+xor_ascii_number = []
+xor_ascii_bin = []
+
+divisor = 311 * 47
+for i in range(len(encrypted_nums)):
+    y = chr(int(encrypted_nums[i]/divisor))
+    xor_ascii_number.append(int(encrypted_nums[i]/divisor))
+    xor_text.append(y)
+
+
+semi_ciphertext = "".join(xor_text)
+
+
+plaintext = ""
+text_key = "trudeau"
+key_length = len(text_key)
+for i, char in enumerate(semi_ciphertext):
+    key_char = text_key[i % key_length]
+    decrypted_char = chr(ord(char) ^ ord(key_char))
+    plaintext += decrypted_char
+print(plaintext[::-1])
+```
+I got the following output: `picoCTF{custom_d2cr0pt6d_8b41f976}`
+
+## Flag: `picoCTF{custom_d2cr0pt6d_8b41f976}`
+
 
 # 3.miniRSA 
 
