@@ -253,3 +253,109 @@ XOR rules:
 
 
 
+# 4. Willy's Chocolate Experience
+
+
+## Solution:
+
+- The challenge takes the flag, converts it into a big integer using bytes_to_long, and calls that number the ticket.
+
+- We don’t know the ticket, but the program gives us two outputs of a function:
+  f(m) = 13^m + 37^m (mod p)
+  for two consecutive values of m.
+  From these two results, our goal is to recover m, which eventually gives us the flag.
+
+- After rearranging and simplifying the expressions, the problem becomes a discrete logarithm problem.
+
+- To solve this, we use:
+- Baby-Step Giant-Step (BSGS) for faster brute-force over groups
+- Pohlig–Hellman algorithm, which breaks the problem into smaller parts using factorization
+
+- Each smaller solution gives a modular result, and all these pieces are combined using the Chinese Remainder Theorem (CRT) to get the final value of (m – 1).
+
+- Once we add 1 to this result, we get the correct m.
+  Converting m back to bytes reveals the flag.
+
+```python
+from collections import Counter
+from Crypto.Util.number import inverse, long_to_bytes
+
+p = 396430433566694153228963024068183195900644000015629930982017434859080008533624204265038366113052353086248115602503012179807206251960510130759852727353283868788493357310003786807
+A = 208271276785711416565270003674719254652567820785459096303084135643866107254120926647956533028404502637100461134874329585833364948354858925270600245218260166855547105655294503224
+B = 124499652441066069321544812234595327614165778598236394255418354986873240978090206863399216810942232360879573073405796848165530765886142184827326462551698684564407582751560255175
+g = 37
+
+x = ((A - 13 * B) * inverse(24, p)) % p
+
+def factorTrial(n, bound=2000000):
+    f = Counter()
+    d = 2
+    while d * d <= n and d <= bound:
+        while n % d == 0:
+            f[d] += 1
+            n //= d
+        d = 3 if d == 2 else d + 2
+    return f, n
+
+def bsgs(base, target, modp, limit):
+    m = int(pow(limit,0.5)) + 1
+    table = {}
+    cur = 1
+    for j in range(m):
+        if cur not in table:
+            table[cur] = j
+        cur = (cur * base) % modp
+
+    step = pow(inverse(base, modp), m, modp)
+    gamma = target
+    for i in range(m + 1):
+        if gamma in table:
+            return (i * m + table[gamma]) % limit
+        gamma = (gamma * step) % modp
+    return None
+
+def hellman(base, target, modp):
+    N = modp - 1
+    facs, rem = factorTrial(N)
+    if rem != 1:
+        facs[int(rem)] += 1
+
+    parts = []
+    for q, e in facs.items():
+        pe = q ** e
+        g0 = pow(base, N // pe, modp)
+        h0 = pow(target, N // pe, modp)
+        t = bsgs(g0, h0, modp, pe)
+        parts.append((t, pe))
+
+    M = 1
+    for _, ni in parts:
+        M *= ni
+
+    xcrt = 0
+    for ai, ni in parts:
+        mi = M // ni
+        xcrt = (xcrt + ai * mi * inverse(mi, ni)) % M
+    return xcrt
+
+k = hellman(g, x, p)
+m = k + 1
+print(long_to_bytes(m).decode())
+```
+
+
+## Flag:
+
+```
+nite{g0ld3n_t1ck3t_t0_gl4sg0w}
+```
+
+
+## Concepts learnt:
+
+- Pohlig–Hellman algorithm for solving discrete logs
+- Baby-Step Giant-Step for faster discrete log solvin
+- Chinese Remainder Theorem for combining modular solutions
+
+
+
