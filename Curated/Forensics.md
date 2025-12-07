@@ -174,5 +174,59 @@ GCTF{m0zarellaCHEEEEEEEEEEEEEEEEEEEEEEEEEESE_f1ref0x_SIKEp4ssw0rd}
 
 
 
+# 5. Re:Draw
+
+## Description
+
+ Her screen went black and a strange command window flickered to life, lines of text flashed across before everything went silent. Moments later, the system crashed. By sheer luck, we recovered a memory dump. Note: There are three stages to this challenge and you will find three flags. What we know: just before the crash, a black command window flickered across the screen, something in its output might still be visible if you dig through memory. She was drawing when it happened, and remnants of a painting program linger, which could reveal more if inspected in the right way. Finally, a mysterious archive hides deeper in memory, likely holding the last piece of her work. Hint: Learn up on volatility 2 and its various plugins and what they are used for.
+
+
+## Solution:
+
+- Stage 1 : Flag from CMD Output
+After extracting the .7z file, we got a memory dump (.raw).
+Running kdbgscan showed the profile was Win7SP1x64.
+Using pslist, we saw 3 important processes:
+cmd.exe
+mspaint.exe
+WinRAR.exe
+Since the black window was CMD, we used the consoles plugin on the cmd process.
+This showed a Base64 string that was typed before the crash.
+Decoding this Base64 string gave the flag for Stage 1.
+
+- Stage 2 : Flag Hidden Inside MS Paint Memory
+The user was drawing in MS Paint, so the drawing data should exist in RAM.
+Using memdump on the mspaint.exe process gave a .dmp file.
+We renamed it to .data so it could be opened as raw bytes.
+Opening the file in a hex editor, we searched for image data.
+Repeating FF FF FF FF showed that the image was likely RGBA format.
+The position of the first FF FF FF FF block gave the offset = 276.
+Using GIMP, we entered this offset and experimented with heights.
+At height = 1230, inverted text appeared — this was the Stage 2 flag.
+
+- Stage 3 : Flag Inside a Hidden RAR File
+WinRAR was also running, which means a .rar file might be inside memory.
+Using cmdline on the WinRAR process, we found:
+`Important.rar`
+Using filescan, we found this .rar file inside memory.
+We then used dumpfiles to extract it.
+The .rar file required a password. The hint said:
+The password = NTLM hash (uppercase) of Alissa’s account.
+We used hashdump to get all NTLM hashes.
+The NTLM hash for Alissa Simpson unlocked the RAR file.
+Extracting it gave flag3.png, which contained the Stage 3 flag.
+
+
+## Flag:
+
+```
+flag{th1s_1s_th3_1st_st4g3!!}
+flag{Good_Boy_good_girl}
+flag{w3ll_3rd_stage_was_easy}
+```
+
+
+
+
 
 
