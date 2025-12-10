@@ -359,3 +359,38 @@ nite{g0ld3n_t1ck3t_t0_gl4sg0w}
 
 
 
+# 5. SpAES Oddity
+
+## Solution:
+- The challenge server encrypts everything using AES in ECB mode.
+The plaintext structure is:
+
+your input (must be odd length) + the hidden flag + padding to 16 bytes
+
+- Because AES-ECB works block-by-block, if two 16-byte plaintext blocks are same, their ciphertext blocks will also be identical.
+This is the what we exploit.
+- To recover the flag, the goal is to make the unknown flag characters appear at the end of a block where we can guess them.
+  
+1. We send 15 characters, for example "A"*15.
+This forces the first encryption block to be:
+[ 15 × 'A'  +  1st byte of flag ]
+2. We save the ciphertext of that block.
+3. Now we try to “guess” the first flag byte,we send inputs like:
+ AAAAAAAAAAAAAAA + X
+for all 256 possible values of X.
+4. When one guess creates a block whose ciphertext matches the original saved block, that means X = the first character of the flag.
+5. After discovering the first character, we repeat the process:
+   - shift the block by adding one more known character
+   - brute-force the next one
+   - match ciphertext blocks again
+6. Doing this for all 49 bytes reveals the full flag.
+
+   
+## Flag:
+```
+nite{D4v1d_B0w13_1n_th3_5ky_w1th_d14m0nd5}
+```
+## Concepts learnt:
+- i learnt about AES-ECB oracle encryption
+- Byte-by-byte decryption technique
+  
