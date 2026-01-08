@@ -17,7 +17,7 @@ As `--` was filtered out, we can use `/*` as an alternative to comment out the r
 
 filters: `or and = like > < --`
 
-This injection string functions same as above. 
+The query for this is same as above.
 
 ### Round 4: `adm'||'in/*`
 
@@ -30,7 +30,7 @@ Here, the word `admin` was blocked, so what I can do is, break it into two parts
 
 filters: `or and = like > < -- admin union`
 
-Same as above 
+Query is Same as above.
 
 This is what I got in the `http://shape-facility.picoctf.net:61909/filter.php` after completing all 5 rounds: 
 
